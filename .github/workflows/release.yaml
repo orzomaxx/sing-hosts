@@ -50,12 +50,17 @@ jobs:
           fi
 
           # Download hosts file if needed
-          echo curl -fsSL -O "${args[@]}" "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt"
-          echo curl -fsSL -O "${args[@]}" "https://schakal.hopto.org/hosts/${HOSTS_FILENAME}.txt"
-          LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt")" || \
-              LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.hopto.org/hosts/${HOSTS_FILENAME}.txt")" || true
-          echo T1 $LAST_MODIFIED
-          [[ -f "${HOSTS_FILENAME}.txt" ]] && echo OK || echo F
+          if [[ ! -f "${HOSTS_FILENAME}.txt" ]]; then
+              echo curl "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt"
+              LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt")"
+          fi
+
+          if [[ ! -f "${HOSTS_FILENAME}.txt" ]]; then
+              echo curl "https://schakal.hopto.org/hosts/${HOSTS_FILENAME}.txt"
+              LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.hopto.org/hosts/${HOSTS_FILENAME}.txt")"
+          fi
+
+          echo "LAST_MODIFIED=$LAST_MODIFIED"
 
           # Check 304 response
           [[ -f "${HOSTS_FILENAME}.txt" ]] || exit 0
