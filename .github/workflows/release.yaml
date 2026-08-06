@@ -50,8 +50,10 @@ jobs:
           fi
 
           # Download hosts file if needed
-          LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt")" \
-            || LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.hopto.org/${HOSTS_FILENAME}.txt")"
+          echo curl -fsSL -O "${args[@]}" "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt"
+          LAST_MODIFIED="$(curl -fsSL -O "${args[@]}" "https://schakal.ru/hosts/${HOSTS_FILENAME}.txt")" || true
+          echo T1 $LAST_MODIFIED
+          [[ -f "${HOSTS_FILENAME}.txt" ]] && echo OK || echo F
 
           # Check 304 response
           [[ -f "${HOSTS_FILENAME}.txt" ]] || exit 0
